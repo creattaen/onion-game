@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "양파 멘탈 케어 (비난과 칭찬)",
+  "version": "1.0",
+  "description": "스트레스를 비난 양파에게 풀고 거름을 얻어 칭찬 양파를 키워보세요.",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "양파 열기"
+  },
+  "permissions": [
+    "storage",
+    "identity",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://*.supabase.co/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
