@@ -95,19 +95,19 @@ const GameUI = ({
       </div>
 
       {/* Footer / Input */}
-      <div className="flex justify-center pointer-events-auto w-full max-w-2xl mx-auto mb-4">
-        <div className="w-full bg-white/80 dark:bg-black/60 backdrop-blur-2xl border border-white/30 dark:border-white/10 rounded-3xl p-4 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.2)] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] flex flex-col gap-4 transition-colors duration-500">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 pointer-events-auto">
+        <div className="bg-white/90 dark:bg-black/80 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-3xl p-4 shadow-2xl flex flex-col gap-4 transition-all duration-500">
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Talk to your onion..."
-            className="w-full h-24 bg-transparent border-none focus:ring-0 resize-none text-lg text-gray-900 dark:text-white placeholder-gray-400 transition-colors duration-500"
+            className="w-full h-20 bg-transparent border-none focus:ring-0 resize-none text-lg text-gray-900 dark:text-white placeholder-gray-400"
           />
           <div className="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-3">
             <div className="flex gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
               {profile.fertilizer_count > 0 && (
                 <span className="flex items-center gap-1 text-yellow-500 animate-pulse">
-                  <Star size={12} fill="currentColor" /> 1.5x Bonus Active
+                  <Star size={12} fill="currentColor" /> Bonus Active
                 </span>
               )}
             </div>
@@ -115,16 +115,16 @@ const GameUI = ({
               <button
                 onClick={() => handleAction('blame')}
                 disabled={!text.trim()}
-                className="group flex items-center gap-2 px-6 py-2.5 bg-red-100 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-2xl font-bold hover:bg-red-600 hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-red-100"
+                className="flex items-center gap-2 px-5 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-all disabled:opacity-30"
               >
-                <Flame size={18} /> Blame
+                <Flame size={16} /> Blame
               </button>
               <button
                 onClick={() => handleAction('praise')}
                 disabled={!text.trim()}
-                className="group flex items-center gap-2 px-6 py-2.5 bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-2xl font-bold hover:bg-green-600 hover:text-white transition-all disabled:opacity-50 disabled:hover:bg-green-100"
+                className="flex items-center gap-2 px-5 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-xl font-bold hover:bg-green-600 hover:text-white transition-all disabled:opacity-30"
               >
-                <Star size={18} /> Praise
+                <Star size={16} /> Praise
               </button>
             </div>
           </div>
