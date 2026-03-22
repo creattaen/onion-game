@@ -68,78 +68,88 @@ function App() {
   return (
     <div className="w-screen h-screen relative overflow-hidden transition-colors duration-500 bg-white text-black dark:bg-gray-900 dark:text-white">
       
-      {/* 3D 배경 */}
-      <div className="absolute inset-0 z-0">
+      {/* 3D 캔버스 배경 */}
+      <div className="absolute inset-0 w-full h-full z-0">
         <Canvas shadows dpr={[1, 2]}>
           <OnionScene status={onionStatus} />
         </Canvas>
       </div>
 
-      {/* Flying Texts Overlay */}
-      <div className="absolute inset-0 pointer-events-none z-[5] flex items-center justify-center">
-        <AnimatePresence>
-          {flyingTexts.map((item) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 1, y: 200, scale: 0.5 }}
-              animate={{ opacity: 0, y: -200, scale: 1.5 }}
-              className={`absolute text-2xl font-bold px-4 py-2 rounded-full shadow-2xl ${item.type === 'blame' ? 'bg-red-500 text-white' : 'bg-yellow-400 text-gray-900'}`}
-            >
-              {item.text}
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      {/* UI 오버레이 */}
+      <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-6">
+        
+        {/* 상단 레이아웃 (헤더 & 테마 버튼) */}
+        <div className="flex justify-between items-start w-full">
+          {/* 좌측 상단: 헤더 및 로그인 */}
+          <div className="flex flex-col gap-4 pointer-events-auto">
+            <h1 className="text-3xl font-black tracking-tighter">ONION<span className="text-green-500">GAME</span></h1>
+            <div className="flex gap-2">
+              {!session ? (
+                <button onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })} className="flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-full text-sm font-bold shadow-xl">
+                  <LogIn size={16} /> Login
+                </button>
+              ) : (
+                <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-full text-sm font-bold shadow-xl">
+                  <LogOut size={16} /> Logout
+                </button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <StatBox icon={Medal} label="LV" val={profile.praise_level} color="text-yellow-500" />
+              <StatBox icon={TrendingUp} label="EXP" val={profile.praise_exp} color="text-blue-500" />
+              <StatBox icon={Sprout} label="FERT" val={profile.fertilizer_count} color="text-green-500" />
+            </div>
+          </div>
 
-      {/* 상단 UI (좌측 상단 고정) */}
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-4 pointer-events-auto">
-        <h1 className="text-3xl font-black tracking-tighter">ONION<span className="text-green-500">GAME</span></h1>
-        <div className="flex gap-2">
-          {!session ? (
-            <button onClick={() => supabase.auth.signInWithOAuth({ provider: 'google' })} className="flex items-center gap-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-full text-sm font-bold shadow-xl">
-              <LogIn size={16} /> Login
-            </button>
-          ) : (
-            <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-800 rounded-full text-sm font-bold shadow-xl">
-              <LogOut size={16} /> Logout
-            </button>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <StatBox icon={Medal} label="LV" val={profile.praise_level} color="text-yellow-500" />
-          <StatBox icon={TrendingUp} label="EXP" val={profile.praise_exp} color="text-blue-500" />
-          <StatBox icon={Sprout} label="FERT" val={profile.fertilizer_count} color="text-green-500" />
-        </div>
-      </div>
-
-      {/* 테마 변경 버튼 (우측 상단 고정) */}
-      <div className="absolute top-4 right-4 z-10">
-        <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className="p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700">
-          {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
-        </button>
-      </div>
-
-      {/* 하단 채팅 바 (하단 중앙 고정) */}
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10 w-[90%] max-w-2xl bg-white/80 dark:bg-black/80 p-4 rounded-2xl shadow-2xl backdrop-blur-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Talk to your onion..."
-          className="w-full h-20 bg-transparent border-none focus:ring-0 resize-none text-lg placeholder-gray-400"
-        />
-        <div className="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-3">
-          <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
-            {profile.fertilizer_count > 0 && "Bonus Active"}
-          </span>
-          <div className="flex gap-2">
-            <button onClick={() => handleAction('blame')} disabled={!text.trim()} className="flex items-center gap-2 px-5 py-2 bg-red-500 text-white rounded-xl font-bold disabled:opacity-30">
-              <Flame size={16} /> Blame
-            </button>
-            <button onClick={() => handleAction('praise')} disabled={!text.trim()} className="flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-xl font-bold disabled:opacity-30">
-              <Star size={16} /> Praise
+          {/* 우측 상단: 테마 토글 */}
+          <div className="pointer-events-auto">
+            <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className="p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-xl rounded-2xl border border-gray-100 dark:border-gray-700">
+              {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
             </button>
           </div>
         </div>
+
+        {/* 중앙: Flying Texts (Over Canvas, Under UI if needed, but pointer-events-none anyway) */}
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+          <AnimatePresence>
+            {flyingTexts.map((item) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 1, y: 200, scale: 0.5 }}
+                animate={{ opacity: 0, y: -200, scale: 1.5 }}
+                className={`absolute text-2xl font-bold px-4 py-2 rounded-full shadow-2xl ${item.type === 'blame' ? 'bg-red-500 text-white' : 'bg-yellow-400 text-gray-900'}`}
+              >
+                {item.text}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* 하단: 채팅 바 */}
+        <div className="flex justify-center w-full mb-4">
+          <div className="w-full max-w-2xl bg-white/80 dark:bg-black/80 p-4 rounded-2xl shadow-2xl backdrop-blur-md border border-gray-200 dark:border-gray-800 flex flex-col gap-3 pointer-events-auto">
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder="Talk to your onion..."
+              className="w-full h-20 bg-transparent border-none focus:ring-0 resize-none text-lg placeholder-gray-400"
+            />
+            <div className="flex justify-between items-center border-t border-gray-100 dark:border-gray-800 pt-3">
+              <span className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+                {profile.fertilizer_count > 0 && "Bonus Active"}
+              </span>
+              <div className="flex gap-2">
+                <button onClick={() => handleAction('blame')} disabled={!text.trim()} className="flex items-center gap-2 px-5 py-2 bg-red-500 text-white rounded-xl font-bold disabled:opacity-30">
+                  <Flame size={16} /> Blame
+                </button>
+                <button onClick={() => handleAction('praise')} disabled={!text.trim()} className="flex items-center gap-2 px-5 py-2 bg-green-500 text-white rounded-xl font-bold disabled:opacity-30">
+                  <Star size={16} /> Praise
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );
